@@ -24,7 +24,7 @@ const dimRenderer = L.svg({ padding: 3, pane: 'dimPane' });
 const loadDim = async () => {
   const [m, bounds] = await Promise.all([
     fetch('data/harris-mask.geojson').then((r) => r.json()),
-    fetch('data/harris-boundary.json').then((r) => r.json()),
+    fetch('data/harris-boundary.geojson').then((r) => r.json()),
   ]);
   const maskLayer = L.geoJSON(m, {
     pane: 'dimPane',
@@ -47,6 +47,19 @@ const container = document.querySelector('.slide-section');
 const slides = document.querySelectorAll('.slide');
 
 const slideOptions = {
+  'intro': {
+    style: (feature) => {
+      const isRail = feature.properties.route_type === 0;
+      return {
+        color: feature.properties.route_color || (isRail ? '#ff5a45' : '#5f7284'),
+        weight: isRail ? 4 : 1.5,
+        opacity: isRail ? 0.95 : 0.6,
+      };
+    },
+    onEachFeature: (feature, layer) => {
+      layer.bindTooltip((`${feature.properties.route_short_name || ''} ${feature.properties.route_long_name || ''}`.trim()));
+    },
+  },
   'second-slide': {
     style: (feature) => {
       return {
@@ -76,7 +89,35 @@ const slideOptions = {
 // ## The SlideDeck object
 const deck = new SlideDeck(container, slides, map, slideOptions);
 
-document.addEventListener('scroll', () => deck.calcCurrentSlideIndex());
+// Per-slide legend
+const legendRows = (title, rows) =>
+  (title ? `<span class="lg-title">${title}</span>` : '')
+  + rows.map((r) => `<span class="lg-row"><span class="lg-sw" style="background:${r.c}"></span>${r.t}</span>`).join('');
+
+const legendHTML = {
+  'intro': legendRows('Transit network', [
+    { c: '#004080', t: 'Bus route' },
+    { c: '#EF0000', t: 'METRORAIL Red Line' },
+    { c: '#3E7E00', t: 'Green Line' },
+    { c: '#40007E', t: 'Purple Line' },
+  ]),
+};
+
+const legendEl = document.querySelector('#legend');
+
+let lastLegendId = null;
+const updateLegend = () => {
+  const id = deck.slides[deck.currentSlideIndex] && deck.slides[deck.currentSlideIndex].id;
+  if (id === lastLegendId) { return; }
+  lastLegendId = id;
+  const html = legendHTML[id];
+  if (html) { legendEl.innerHTML = html; legendEl.hidden = false; } else { legendEl.hidden = true; }
+  // May need to adjust legend position for certain slides, e.g. if the map is zoomed in and the legend would cover important features
+  legendEl.classList.toggle('legend-right', id === 'intro');
+};
+
+document.addEventListener('scroll', () => { deck.calcCurrentSlideIndex(); updateLegend(); });
 
 deck.preloadFeatureCollections();
 deck.syncMapToCurrentSlide();
+updateLegend();

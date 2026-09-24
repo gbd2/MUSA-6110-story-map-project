@@ -123,11 +123,11 @@ class SlideDeck {
     const gap = 24;
     let padTopleft = [20, 20];
     let padBottomright = [20, 20];
-    if (vw > 720 && rect.width < vw * 0.8) {
+    if (vw > 720 && rectangle.width < vw * 0.8) {
       const leftGap = rectangle.left;
       const rightGap = vw - rectangle.right;
       if (leftGap < rightGap) {
-        addingTopLeft = [Math.round(rect.right + gap), 20];
+        padTopleft = [Math.round(rectangle.right + gap), 20];
       } else {
         padBottomright = [Math.round(vw - rectangle.left + gap), 20];
       }
@@ -222,7 +222,7 @@ class SlideDeck {
       if (slidePos <= currentSlideThreshold) {
         break;
       }
-    }
+    }   
 
     if (i !== this.currentSlideIndex) {
       this.currentSlideIndex = i;

@@ -82,3 +82,11 @@ body {
 .slide-nav-select {
   min-width: 0;
 }
+
+.legend {
+  position:fixed;
+  bottom:1rem;
+  left:1rem;
+  background:#fff;
+  z-index:500;
+}
