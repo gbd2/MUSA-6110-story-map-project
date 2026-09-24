@@ -152,6 +152,18 @@ const slideOptions = {
       layer.bindTooltip(`${lilaShare(p.lowincome_lowaccess_share)}, ${carFree(p.pct_zero_car)}`);
     },
   },
+  'food-carless': {
+    style: (feature) => {
+      if (feature.properties.both) {
+        return { color: '#c01050', weight: 1, fillColor: '#e11d5e', fillOpacity: 0.85 };
+      }
+      return { color: 'rgb(217 138 31 / 45%)', weight: 0.4, fillColor: '#d98a1f', fillOpacity: 0.3 };
+    },
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      layer.bindTooltip(`${lilaShare(p.lila_share)}, ${carFree(p.pct_zero_car)}`);
+    },
+  },
 };
 
 // ## The SlideDeck object
