@@ -99,7 +99,20 @@ const slideOptions = {
     style: () => ({ color: 'rgb(20 28 38 / 24%)', weight: 0.4, fill: false }),
     onEachFeature: () => {},
   },
-  
+  'need': {
+    style: (feature) => polyBase(seq(feature.properties.pct_zero_car, 0.6, '#f6d3e3', '#c81e6f', 0.8)),
+    onEachFeature: (feature, layer) => {
+      const pct = feature.properties.pct_zero_car;
+      layer.bindTooltip((pct === null || pct === undefined) ? 'No data' : `${Math.round(pct * 100)}% zero-car households`);
+    },
+  },
+  'jobs': {
+    style: (feature) => polyBase(divJobs(feature.properties.jobs_transit_45)),
+    onEachFeature: (feature, layer) => {
+      const v = feature.properties.jobs_transit_45;
+      layer.bindTooltip((v === null || v === undefined) ? 'No data' : `${Math.round(v).toLocaleString()} jobs in 45 min`);
+    },
+  },
 };
 
 // ## The SlideDeck object
@@ -110,6 +123,11 @@ const legendRows = (title, rows) =>
   (title ? `<span class="lg-title">${title}</span>` : '')
   + rows.map((r) => `<span class="lg-row"><span class="lg-sw" style="background:${r.c}"></span>${r.t}</span>`).join('');
 
+const legendGrad = (title, c0, c1, lo, hi) =>
+  (title ? `<span class="lg-title">${title}</span>` : '')
+  + `<span class="lg-bar" style="background:linear-gradient(90deg, ${c0}, ${c1})"></span>`
+  + `<span class="lg-ends"><span>${lo}</span><span>${hi}</span></span>`;
+
 const legendHTML = {
   'intro': legendRows('Transit network', [
     { c: '#004080', t: 'Bus route' },
@@ -117,7 +135,11 @@ const legendHTML = {
     { c: '#3E7E00', t: 'Green Line' },
     { c: '#40007E', t: 'Purple Line' },
   ]),
+  'need': legendGrad('Car-free households', '#f6d3e3', '#c81e6f', '0%', '60%+'),
+  'jobs': legendGrad('Jobs reachable in 45 min by transit', '#e6521f', '#0f8f83', 'fewer', 'more')
+    + legendRows('', [{ c: NODATA, t: 'No modeled transit' }]),
 };
+
 
 const legendEl = document.querySelector('#legend');
 
