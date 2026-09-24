@@ -60,7 +60,7 @@ class SlideDeck {
    * @return {object} The FeatureCollection as loaded from the data file
    */
   async getSlideFeatureCollection(slide) {
-    const resp = await fetch(`data/${slide.id}.json`);
+    const resp = await fetch(`data/${slide.id}.geojson`);
     const data = await resp.json();
     return data;
   }
@@ -118,11 +118,28 @@ class SlideDeck {
       this.map.removeEventListener('moveend', handleFlyEnd);
     };
 
+    const vw = this.map.getSize().x;
+    const rectangle = slide.getBoundingClientRect();
+    const gap = 24;
+    let padTopleft = [20, 20];
+    let padBottomright = [20, 20];
+    if (vw > 720 && rect.width < vw * 0.8) {
+      const leftGap = rectangle.left;
+      const rightGap = vw - rectangle.right;
+      if (leftGap < rightGap) {
+        addingTopLeft = [Math.round(rect.right + gap), 20];
+      } else {
+        padBottomright = [Math.round(vw - rectangle.left + gap), 20];
+      }
+    }
+    const flyOptions = { padTopleft, padBottomright };
+
+
     this.map.addEventListener('moveend', handleFlyEnd);
     if (collection.bbox) {
-      this.map.flyToBounds(boundsFromBbox(collection.bbox));
+      this.map.flyToBounds(boundsFromBbox(collection.bbox), flyOptions);
     } else {
-      this.map.flyToBounds(layer.getBounds());
+      this.map.flyToBounds(layer.getBounds(), flyOptions);
     }
   }
 
