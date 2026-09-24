@@ -113,6 +113,20 @@ const slideOptions = {
       layer.bindTooltip((v === null || v === undefined) ? 'No data' : `${Math.round(v).toLocaleString()} jobs in 45 min`);
     },
   },
+  'gap': {
+    style: (feature) => {
+      const p = feature.properties;
+      if (p.gap_flag) { return { color: '#ffd27a', weight: 1, fillColor: '#ffb020', fillOpacity: 0.92 }; }
+      const t = p.access_tertile ? (p.access_tertile - 1) / 2 : 0;
+      return { color: 'rgb(20 28 38 / 12%)', weight: 0.3, fillColor: hexMix('#dbe0e5', '#a9b3bc', t), fillOpacity: 0.6 };
+    },
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      const jobs = (p.jobs_transit_45 === null || p.jobs_transit_45 === undefined)
+        ? 'no modeled transit' : `${Math.round(p.jobs_transit_45).toLocaleString()} jobs in 45 min`;
+      layer.bindTooltip(`${carFree(p.pct_zero_car)}, ${jobs}`);
+    },
+  },
 };
 
 // ## The SlideDeck object
@@ -138,6 +152,7 @@ const legendHTML = {
   'need': legendGrad('Car-free households', '#f6d3e3', '#c81e6f', '0%', '60%+'),
   'jobs': legendGrad('Jobs reachable in 45 min by transit', '#e6521f', '#0f8f83', 'fewer', 'more')
     + legendRows('', [{ c: NODATA, t: 'No modeled transit' }]),
+  'gap': legendRows('Job-access gap', [{ c: '#ffb020', t: 'Highest need, lowest access' }, { c: '#a9b3bc', t: 'Everywhere else' }]),
 };
 
 
