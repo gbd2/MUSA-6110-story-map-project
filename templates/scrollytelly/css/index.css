@@ -90,3 +90,10 @@ body {
   background:#fff;
   z-index:500;
 }
+
+.legend.legend-right {
+  left: auto;
+  right: 1rem;
+  top: 1rem;
+  bottom: auto;
+}

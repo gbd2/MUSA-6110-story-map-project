@@ -77,6 +77,9 @@ const divJobs = (v) => {
 const carFree = (v) => ((v === null || v === undefined)
   ? 'car-free n/a' : `${Math.round(v * 100)}% car-free`);
 
+const lilaShare = (v) => ((v === null || v === undefined)
+  ? 'access share n/a' : `${Math.round(v)}% low-income and over 0.5 mi from a store`);
+
 // ## Interface Elements
 const container = document.querySelector('.slide-section');
 const slides = document.querySelectorAll('.slide');
@@ -137,6 +140,18 @@ const slideOptions = {
       layer.bindTooltip(parts.join(', '));
     },
   },
+    'deserts-food': {
+    style: (feature) => {
+      const desert = feature.properties.LILATracts_halfAnd10 === 1 || feature.properties.LILATracts_1And10 === 1;
+      return polyBase(desert ? '#d98a1f' : '#cbd2d8', desert ? 0.82 : 0.55);
+    },
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      const desert = p.LILATracts_halfAnd10 === 1 || p.LILATracts_1And10 === 1;
+      if (!desert) { layer.bindTooltip('Not a grocery desert'); return; }
+      layer.bindTooltip(`${lilaShare(p.lowincome_lowaccess_share)}, ${carFree(p.pct_zero_car)}`);
+    },
+  },
 };
 
 // ## The SlideDeck object
@@ -164,6 +179,8 @@ const legendHTML = {
     + legendRows('', [{ c: NODATA, t: 'No modeled transit' }]),
   'gap': legendRows('Job-access gap', [{ c: '#ffb020', t: 'Highest need, lowest access' }, { c: '#a9b3bc', t: 'Everywhere else' }]),
   'stranded': legendGrad('Car-free, no stop within 0.5 mi', '#fbe6c2', '#e08a00', '15%', '34%'),
+  'deserts-food': legendRows('Grocery access', [{ c: '#d98a1f', t: 'Low-income, low grocery access' }, { c: '#cbd2d8', t: 'Not flagged' }]),
+  'food-carless': legendRows('Grocery deserts', [{ c: '#e11d5e', t: 'Also car-free (15%+)' }, { c: '#d98a1f', t: 'Grocery desert' }]),
 };
 
 
@@ -177,7 +194,7 @@ const updateLegend = () => {
   const html = legendHTML[id];
   if (html) { legendEl.innerHTML = html; legendEl.hidden = false; } else { legendEl.hidden = true; }
   // May need to adjust legend position for certain slides, e.g. if the map is zoomed in and the legend would cover important features
-  legendEl.classList.toggle('legend-right', id === 'intro');
+    legendEl.classList.toggle('legend-right', id === 'stranded' || id === 'intro');
 };
 
 document.addEventListener('scroll', () => { deck.calcCurrentSlideIndex(); updateLegend(); });
