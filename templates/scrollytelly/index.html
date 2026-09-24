@@ -81,7 +81,35 @@
         <p>These tracts having a bus route is crucial. Rather than a bus route being a convenience, it becomes the line between food being on the dinner table or not.</p>
         <p class="method"><b>Method:</b> Grocery-desert tracts where at least 15% of households also own no car.</p>
       </article>
+
+      <article class="slide" id="deserts-childcare">
+        <h2>Childcare is also very scarce.</h2>
+        <p>595 tracts are childcare deserts, and 370 have no licensed slots at all.</p>
+        <p>Even if one has a job they can reach, it does not help if there is nowhere to leave the kids on the way.</p>
+        <p class="method"><b>Method:</b> A tract is flagged when it has children under 5 but more than three of them for every licensed child-care slot, or no licensed slots at all (Texas HHSC licensing, 2026; under-5 population from ACS 2020 to 2024).</p>
+      </article>
+
+      <article class="slide panel-left" id="triple-risk">
+        <h2>Sixty-six tracts are highlighted in every analysis.</h2>
+        <p>These tracts land on all three maps, meaning they have less job access, live in a grocery desert, and also live in a childcare desert. About 334,000 people live in them.</p>
+        <p>Here the hardships stack together: the same means-tested households absorb a hard commute, a distant grocery run, and a scramble for childcare all at once.</p>
+        <div class="risk-table-wrap" role="region" aria-label="Tracts flagged for job, grocery, and childcare access, ordered by car-free share" tabindex="0">
+          <table class="risk-table">
+            <thead>
+              <tr>
+                <th scope="col">Tract</th>
+                <th scope="col">Residents</th>
+                <th scope="col">Median income</th>
+                <th scope="col">Car-free</th>
+              </tr>
+            </thead>
+            <tbody id="triple-rows"></tbody>
+          </table>
+        </div>
+        <p class="method"><b>Method:</b> Each of these tracts contains at least one of the 181 highest-need, lowest-access block groups and is also a grocery desert and a childcare desert. Grocery and job data use the 2010 census tract boundaries and childcare the 2020 boundaries.</p>
+      </article>
     </section>
+
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

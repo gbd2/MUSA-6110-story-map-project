@@ -164,6 +164,30 @@ const slideOptions = {
       layer.bindTooltip(`${lilaShare(p.lila_share)}, ${carFree(p.pct_zero_car)}`);
     },
   },
+  'deserts-childcare': {
+    style: (feature) => {
+      const desert = feature.properties.childcare_desert === true || feature.properties.childcare_desert === 1;
+      return polyBase(desert ? '#8b5cf6' : '#cbd2d8', desert ? 0.82 : 0.55);
+    },
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      const desert = p.childcare_desert === true || p.childcare_desert === 1;
+      if (!desert) { layer.bindTooltip('Not a childcare desert'); return; }
+      const slots = (p.children_per_slot === null || p.children_per_slot === undefined)
+        ? 'no licensed slots' : `${p.children_per_slot} kids per slot`;
+      layer.bindTooltip(`${slots}, ${carFree(p.pct_zero_car)}`);
+    },
+  },
+  'triple-risk': {
+    style: (feature) => polyBase(seq(feature.properties.pct_zero_car, 0.3, '#f7d0d6', '#e11d38', 0.7), 0.9),
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      const parts = [carFree(p.pct_zero_car)];
+      if (p.median_hh_income) { parts.push(`$${Math.round(p.median_hh_income).toLocaleString()}`); }
+      parts.push(lilaShare(p.lila_share));
+      layer.bindTooltip(parts.join(', '));
+    },
+  },
 };
 
 // ## The SlideDeck object
@@ -193,6 +217,8 @@ const legendHTML = {
   'stranded': legendGrad('Car-free, no stop within 0.5 mi', '#fbe6c2', '#e08a00', '15%', '34%'),
   'deserts-food': legendRows('Grocery access', [{ c: '#d98a1f', t: 'Low-income, low grocery access' }, { c: '#cbd2d8', t: 'Not flagged' }]),
   'food-carless': legendRows('Grocery deserts', [{ c: '#e11d5e', t: 'Also car-free (15%+)' }, { c: '#d98a1f', t: 'Grocery desert' }]),
+  'deserts-childcare': legendRows('Childcare access', [{ c: '#8b5cf6', t: 'Childcare desert' }, { c: '#cbd2d8', t: 'Adequate' }]),
+  'triple-risk': legendRows('Fails all three tests', [{ c: '#e11d38', t: 'Job + grocery + childcare gap' }]),
 };
 
 
@@ -206,7 +232,7 @@ const updateLegend = () => {
   const html = legendHTML[id];
   if (html) { legendEl.innerHTML = html; legendEl.hidden = false; } else { legendEl.hidden = true; }
   // May need to adjust legend position for certain slides, e.g. if the map is zoomed in and the legend would cover important features
-    legendEl.classList.toggle('legend-right', id === 'stranded' || id === 'intro');
+  legendEl.classList.toggle('legend-right', id === 'stranded' || id === 'triple-risk' || id === 'intro');
 };
 
 document.addEventListener('scroll', () => { deck.calcCurrentSlideIndex(); updateLegend(); });
@@ -237,5 +263,21 @@ fillTable(
     return `<tr><td class="geoid">${p.geoid}</td><td class="numeric">${zc}</td>`
       + `<td class="numeric">${inc}</td>`
       + `<td class="numeric">${p.stop_mi.toFixed(1)} mi</td></tr>`;
+  },
+);
+
+fillTable(
+  '#triple-rows',
+  'data/triple-risk.geojson',
+  (a, b) => (b.pct_zero_car || 0) - (a.pct_zero_car || 0),
+  (p) => {
+    const pop = p.total_pop ? Math.round(p.total_pop).toLocaleString() : 'n/a';
+    const inc = p.median_hh_income
+      ? `$${Math.round(p.median_hh_income).toLocaleString()}`
+      : '';
+    const zc = (p.pct_zero_car === null || p.pct_zero_car === undefined)
+      ? 'n/a' : `${Math.round(p.pct_zero_car * 100)}%`;
+    return `<tr><td class="geoid">${p.GEOID}</td><td class="numeric">${pop}</td>`
+      + `<td class="numeric">${inc}</td><td class="numeric">${zc}</td></tr>`;
   },
 );
