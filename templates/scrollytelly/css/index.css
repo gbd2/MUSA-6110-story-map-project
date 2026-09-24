@@ -1,10 +1,23 @@
+:root {
+  --ink: #e7e9ec;
+  --panel: rgb(255 255 255 / 92%);
+  --line: rgb(15 23 32 / 14%);
+  --text: #1b2229;
+  --muted: #59636f;
+  --muted-2: #6a7480;
+  --accent: #c9820a;
+}
+
 body {
   margin: 0;
-  border-width: 0;
+  min-height: 100vh;
+  background-color: var(--ink);
   box-sizing: border-box;
   height: 100vh;
+  color: var(--text);
+  line-height: 1.5;
 
-  font-family: 'Open Sans', sans-serif;
+  font-family: Urbanist, system-ui, sans-serif;
 }
 
 .map-container {
@@ -16,6 +29,7 @@ body {
 
 .map {
   height: 100%;
+  background-color: var(--ink);
 }
 
 .slide-section {
@@ -23,72 +37,179 @@ body {
   margin-top: -30vh;
   z-index: 100;
   pointer-events: none;
-  border-bottom: 1px solid rgb(0 0 0 / 10%);
+
 }
 
+  /* border-bottom: 1px solid rgb(0 0 0 / 10%); */
+
 .slide {
-  margin-top: 90vh;
-  margin-bottom: 90vh;
+  margin-top: 45vh;
+  margin-bottom: 45vh;
   margin-left: auto;
   margin-right: 2rem;
-  padding: 1rem;
-  box-shadow: -0.5rem 0 1rem rgb(0 0 0 / 50%);
-  border: 1px solid gray;
+  padding: 1.5rem 1.6rem;
+  width: min(26rem, calc(100% - 2.4rem));
+  border: 1px solid var(--line);
+  box-shadow: 0 1rem 2.5rem rgb(15 23 32 / 18%);
   border-radius: 0.5rem;
   pointer-events: initial;
+  backdrop-filter: blur(10px);
 
-  width: 25rem;
-
-  background-color: white;
-  color: black;
+  background-color: var(--panel);
+  color: var(--text);
 }
 
 .slide:first-child {
-  margin-top: 0;
+  margin-top: 8vh;
 }
 
 .slide:last-child {
-  margin-bottom: 40vh;
+  margin-bottom: 12vh;
 }
 
-.slide-controls {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  column-gap: 0.5rem;
+h1 {
+  margin: 0.2rem 0 0.6rem;
+  font-family: 'Plus Jakarta Sans', Urbanist, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 2.7rem);
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: #10161c;
+}
 
+h2 {
+  margin: 0 0 0.7rem;
+  font-family: 'Plus Jakarta Sans', Urbanist, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.35rem, 3.4vw, 1.85rem);
+  line-height: 1.1;
+  text-wrap: balance;
+  color: #10161c;
+}
+
+.slide p {
+  margin: 0 0 0.85rem;
+  color: #333c45;
+}
+
+.slide p:last-child {
+  margin-bottom: 0;
+}
+
+.method {
+  margin: 1rem 0 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--line);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.66rem;
+  line-height: 1.6;
+  color: var(--muted-2);
+}
+
+.method b {
+  font-family: Urbanist, system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.leaflet-tooltip {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background-color: rgb(255 255 255 / 97%);
+  color: var(--text);
+  font-size: 0.72rem;
+  box-shadow: 0 0.5rem 1rem rgb(15 23 32 / 20%);
+}
+
+.leaflet-tooltip::before {
+  display: none;
+}
+
+.leaflet-control-attribution {
+  background-color: rgb(255 255 255 / 82%) !important;
+  color: var(--muted-2) !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--muted) !important;
+}
+
+.slide.panel-left {
+  margin-left: 2rem;
+  margin-right: auto;
+  width: min(30rem, calc(100% - 2.4rem));
+}
+
+.risk-table-wrap {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  max-height: 42vh;
+  overflow: auto;
+  border-top: 1px solid var(--line);
+}
+
+.risk-table-wrap:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.risk-table {
   width: 100%;
+  border-collapse: collapse;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
 }
 
-.slide-nav-button {
-  transition: all 0.1s;
-
-  padding: 0;
-  margin: 1rem;
-  width: 4rem;
-  height: 3rem;
-  border: 1px solid #888;
-  border-radius: 0.25rem;
-
-  background-color: #eee;
-  font-size: 1.5em;
+.risk-table thead th {
+  position: sticky;
+  top: 0;
+  padding: 0.5rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  background-color: rgb(240 242 245 / 97%);
+  color: var(--muted);
+  text-align: left;
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
 
-.slide-nav-button:hover {
-  background-color: #444;
-  color: #fff;
+.risk-table td {
+  padding: 0.4rem 0.7rem;
+  border-bottom: 1px solid rgb(15 23 32 / 8%);
+  color: var(--text);
 }
 
-.slide-nav-select {
-  min-width: 0;
+.risk-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.risk-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.risk-table .geoid {
+  color: var(--muted);
 }
 
 .legend {
-  position:fixed;
-  bottom:1rem;
-  left:1rem;
-  background:#fff;
-  z-index:500;
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 500;
+  max-width: 15rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background-color: rgb(255 255 255 / 96%);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.66rem;
+  line-height: 1.5;
+  pointer-events: none;
 }
 
 .legend.legend-right {
@@ -98,7 +219,110 @@ body {
   bottom: auto;
 }
 
-/* Redlining figure and reference pins */
+.lg-title {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--muted);
+}
+
+.lg-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.lg-sw {
+  flex: 0 0 auto;
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 1px solid rgb(15 23 32 / 22%);
+  border-radius: 0.2rem;
+}
+
+.lg-bar {
+  display: block;
+  height: 0.6rem;
+  margin: 0.1rem 0 0.15rem;
+  border-radius: 0.3rem;
+}
+
+.lg-ends {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+}
+
+.cite-list {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  counter-reset: cite;
+}
+
+.cite-list li {
+  position: relative;
+  padding-left: 1.6rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #333c45;
+}
+
+.cite-list li::before {
+  counter-increment: cite;
+  content: counter(cite);
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted-2);
+}
+
+.cite-src {
+  display: block;
+  margin-bottom: 0.1rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 700;
+  color: #10161c;
+}
+
+.cite-meta {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted-2);
+}
+
+.slide#citations {
+  box-sizing: border-box;
+  width: min(60rem, calc(100% - 4rem));
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1.8rem 2rem;
+  backdrop-filter: none;
+}
+
+.slide#citations .cite-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 2.2rem;
+  row-gap: 1rem;
+}
+
+@media (width <= 720px) {
+  .slide#citations {
+    width: calc(100% - 2.4rem);
+  }
+
+  .slide#citations .cite-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 .slide.has-figure {
   width: min(30rem, calc(100% - 2.4rem));
 }
@@ -106,25 +330,6 @@ body {
 .hist-figure {
   margin: 0.7rem 0 0.9rem;
   text-align: center;
-}
-
-.hist-figure img {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  max-height: 40vh;
-  height: auto;
-  margin: 0 auto;
-  border: 1px solid rgb(15 23 32 / 14%);
-  border-radius: 0.5rem;
-}
-
-.hist-figure figcaption {
-  margin-top: 0.4rem;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
-  line-height: 1.5;
-  color: #6a7480;
 }
 
 .img-wrap {
@@ -161,79 +366,99 @@ body {
   pointer-events: none;
 }
 
+.map-pin-lg {
+  width: 22px;
+  height: 22px;
+}
+
+.map-pin-lg::before {
+  font-size: 12px;
+}
+
 .rice-pin-icon {
   background: none;
   border: 0;
 }
 
-/* Citations: wide, centered, map-free block */
-.cite-list {
-  list-style: none;
-  margin: 0.6rem 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  counter-reset: cite;
-}
-
-.cite-list li {
-  position: relative;
-  padding-left: 1.6rem;
-  font-size: 0.8rem;
-  line-height: 1.45;
-  color: #333c45;
-}
-
-.cite-list li::before {
-  counter-increment: cite;
-  content: counter(cite);
-  position: absolute;
-  left: 0;
-  top: 0.05rem;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.7rem;
-  color: #6a7480;
-}
-
-.cite-src {
+.hist-figure img {
   display: block;
-  margin-bottom: 0.1rem;
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  font-weight: 700;
-  color: #10161c;
+  width: auto;
+  max-width: 100%;
+  max-height: 40vh;
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  cursor: zoom-in;
 }
 
-.cite-meta {
+.hist-figure img:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgb(6 8 11 / 92%);
+}
+
+.lightbox-stage {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  cursor: grab;
+  touch-action: none;
+}
+
+.lightbox-stage.grabbing {
+  cursor: grabbing;
+}
+
+.lightbox-stage img {
   display: block;
-  margin-top: 0.15rem;
+  width: 160vw;
+  max-width: none;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1001;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background-color: rgb(13 16 20 / 92%);
+  color: var(--text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightbox-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.hist-figure figcaption {
+  margin-top: 0.4rem;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.68rem;
-  color: #6a7480;
-}
-
-.slide#citations {
-  box-sizing: border-box;
-  width: min(60rem, calc(100% - 4rem));
-  margin-left: auto;
-  margin-right: auto;
-  padding: 1.8rem 2rem;
-  backdrop-filter: none;
-}
-
-.slide#citations .cite-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 2.2rem;
-  row-gap: 1rem;
+  font-size: 0.62rem;
+  line-height: 1.5;
+  color: var(--muted-2);
 }
 
 @media (width <= 720px) {
-  .slide#citations {
-    width: calc(100% - 2.4rem);
-  }
-
-  .slide#citations .cite-list {
-    grid-template-columns: 1fr;
+  .slide {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 35vh;
+    margin-bottom: 35vh;
   }
 }
