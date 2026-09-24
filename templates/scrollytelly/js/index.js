@@ -188,6 +188,12 @@ const slideOptions = {
       layer.bindTooltip(parts.join(', '));
     },
   },
+  'redlining': {
+    style: (feature) => polyBase(seq(feature.properties.pct_zero_car, 0.3, '#f7d0d6', '#e11d38', 0.7), 0.9),
+    onEachFeature: (feature, layer) => {
+      layer.bindTooltip(carFree(feature.properties.pct_zero_car));
+    },
+  },
 };
 
 // ## The SlideDeck object
@@ -219,10 +225,22 @@ const legendHTML = {
   'food-carless': legendRows('Grocery deserts', [{ c: '#e11d5e', t: 'Also car-free (15%+)' }, { c: '#d98a1f', t: 'Grocery desert' }]),
   'deserts-childcare': legendRows('Childcare access', [{ c: '#8b5cf6', t: 'Childcare desert' }, { c: '#cbd2d8', t: 'Adequate' }]),
   'triple-risk': legendRows('Fails all three tests', [{ c: '#e11d38', t: 'Job + grocery + childcare gap' }]),
+  'redlining': legendRows('Fails all three tests, today', [{ c: '#e11d38', t: 'Job + grocery + childcare gap' }]),
 };
 
 
 const legendEl = document.querySelector('#legend');
+
+// star + dot at Rice University, the reference point
+const riceIcon = L.divIcon({
+  className: 'rice-pin-icon',
+  html: '<span class="pin-dot"></span>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
+});
+const riceDot = L.marker([29.7174, -95.4018], { icon: riceIcon })
+  .bindTooltip('Rice University (reference point)');
+
 
 let lastLegendId = null;
 const updateLegend = () => {
@@ -233,6 +251,7 @@ const updateLegend = () => {
   if (html) { legendEl.innerHTML = html; legendEl.hidden = false; } else { legendEl.hidden = true; }
   // May need to adjust legend position for certain slides, e.g. if the map is zoomed in and the legend would cover important features
   legendEl.classList.toggle('legend-right', id === 'stranded' || id === 'triple-risk' || id === 'intro');
+  if (id === 'redlining') { riceDot.addTo(map); } else if (map.hasLayer(riceDot)) { map.removeLayer(riceDot); }
 };
 
 document.addEventListener('scroll', () => { deck.calcCurrentSlideIndex(); updateLegend(); });
@@ -281,3 +300,61 @@ fillTable(
       + `<td class="numeric">${inc}</td><td class="numeric">${zc}</td></tr>`;
   },
 );
+// ## Redlining image lightbox: click to enlarge, drag to pan
+const lightbox = document.querySelector('#lightbox');
+const lbStage = document.querySelector('#lightbox-stage');
+const lbTrigger = document.querySelector('.hist-figure img.zoomable');
+const lbClose = document.querySelector('#lightbox-close');
+
+const openLightbox = () => {
+  lightbox.hidden = false;
+  requestAnimationFrame(() => {
+    lbStage.scrollLeft = (lbStage.scrollWidth - lbStage.clientWidth) / 2;
+    lbStage.scrollTop = (lbStage.scrollHeight - lbStage.clientHeight) / 2;
+  });
+  lbClose.focus();
+};
+const closeLightbox = () => {
+  lightbox.hidden = true;
+  if (lbTrigger) { lbTrigger.focus(); }
+};
+
+if (lbTrigger) {
+  lbTrigger.addEventListener('click', openLightbox);
+  lbTrigger.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(); }
+  });
+}
+lbClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) { closeLightbox(); }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !lightbox.hidden) { closeLightbox(); }
+});
+
+let dragging = false;
+let startX = 0;
+let startY = 0;
+let startLeft = 0;
+let startTop = 0;
+lbStage.addEventListener('pointerdown', (e) => {
+  dragging = true;
+  startX = e.clientX;
+  startY = e.clientY;
+  startLeft = lbStage.scrollLeft;
+  startTop = lbStage.scrollTop;
+  lbStage.classList.add('grabbing');
+  lbStage.setPointerCapture(e.pointerId);
+});
+lbStage.addEventListener('pointermove', (e) => {
+  if (!dragging) { return; }
+  lbStage.scrollLeft = startLeft - (e.clientX - startX);
+  lbStage.scrollTop = startTop - (e.clientY - startY);
+});
+const endDrag = () => {
+  dragging = false;
+  lbStage.classList.remove('grabbing');
+};
+lbStage.addEventListener('pointerup', endDrag);
+lbStage.addEventListener('pointercancel', endDrag);

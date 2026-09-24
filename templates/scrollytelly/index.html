@@ -108,10 +108,32 @@
         </div>
         <p class="method"><b>Method:</b> Each of these tracts contains at least one of the 181 highest-need, lowest-access block groups and is also a grocery desert and a childcare desert. Grocery and job data use the 2010 census tract boundaries and childcare the 2020 boundaries.</p>
       </article>
+
+      <article class="slide has-figure" id="redlining">
+        <h2>Some of these disadvantages were created almost 100 years ago.</h2>
+        <p>Many of the neighborhoods that now fail all three access tests were graded "D, Hazardous" (red) or "C, Definite Declining" (yellow) on Houston's Depression-era redlining map, marked too risky for mortgage lending largely because of who lived there.</p>
+        <figure class="hist-figure">
+          <span class="img-wrap">
+            <img class="zoomable" src="img/redlining.jpg" alt="A 1930s Home Owners' Loan Corporation residential security map of Houston, grading neighborhoods from A (best, green) through D (hazardous, red)." loading="lazy" tabindex="0" role="button" aria-label="Enlarge the 1930s Houston redlining map">
+            <span class="pin-dot map-pin" aria-hidden="true"></span>
+          </span>
+          <figcaption>Grades of Security, City of Houston. Green A "Best" through red D "Hazardous." The starred navy dot marks Rice Institute (now Rice University); it is the reference point for orienting this historic map against the live map, which carries the same marker. Click to enlarge and pan. Source: Library of Congress, via the Houston Chronicle.</figcaption>
+        </figure>
+        <p>These communities were denied investment then, and are denied amenities and quality of life now. Rather than coincidence, this spatial pattern is the consequence of decisions made nearly a century ago, and a choice to not undo the injustices since.</p>
+        <p class="method"><b>Method:</b> The tracts that fail all three tests today, shown beside Houston's 1930s residential security map from the federal Home Owners' Loan Corporation (HOLC).</p>
+      </article>
     </section>
 
   </main>
-
+    <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="1930s Houston redlining map, drag to pan">
+    <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close">&times;</button>
+    <div class="lightbox-stage" id="lightbox-stage">
+      <span class="img-wrap">
+        <img src="img/redlining.jpg" alt="Full-size 1930s HOLC residential security map of Houston.">
+        <span class="pin-dot map-pin map-pin-lg" aria-hidden="true"></span>
+      </span>
+    </div>
+  </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/index.js" type="module"></script>
 </body>
