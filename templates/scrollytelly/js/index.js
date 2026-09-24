@@ -194,6 +194,28 @@ const slideOptions = {
       layer.bindTooltip(carFree(feature.properties.pct_zero_car));
     },
   },
+    'action': {
+    style: (feature) => {
+      const k = feature.properties.kind;
+      if (k === 'gap') { return polyBase('#f2b134', 0.6); }
+      if (k === 'stranded') { return polyBase('#7c3aed', 0.65); }
+      return { color: '#14303c', weight: 2.5, opacity: 0.9 };
+    },
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      if (p.kind === 'gap') {
+        const jobs = (p.jobs_transit_45 === null || p.jobs_transit_45 === undefined)
+          ? 'no modeled transit' : `${Math.round(p.jobs_transit_45).toLocaleString()} jobs in 45 min`;
+        layer.bindTooltip(`Run buses more often here. ${carFree(p.pct_zero_car)}, ${jobs}`);
+        return;
+      }
+      if (p.kind === 'stranded') {
+        layer.bindTooltip(`Extend service here. ${carFree(p.pct_zero_car)}, ${p.stop_mi} mi to nearest stop`);
+        return;
+      }
+      layer.bindTooltip(`Frequent route: ${p.route_short_name || ''} ${p.route_long_name || ''}`.trim());
+    },
+  },
 };
 
 // ## The SlideDeck object
@@ -226,6 +248,7 @@ const legendHTML = {
   'deserts-childcare': legendRows('Childcare access', [{ c: '#8b5cf6', t: 'Childcare desert' }, { c: '#cbd2d8', t: 'Adequate' }]),
   'triple-risk': legendRows('Fails all three tests', [{ c: '#e11d38', t: 'Job + grocery + childcare gap' }]),
   'redlining': legendRows('Fails all three tests, today', [{ c: '#e11d38', t: 'Job + grocery + childcare gap' }]),
+  'action': legendRows('Where to improve', [{ c: '#14303c', t: 'Frequent bus routes' }, { c: '#f2b134', t: 'Run more often (181)' }, { c: '#7c3aed', t: 'Extend service (33)' },]),
 };
 
 
