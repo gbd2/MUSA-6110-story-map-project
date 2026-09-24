@@ -134,7 +134,6 @@ class SlideDeck {
     }
     const flyOptions = { padTopleft, padBottomright };
 
-
     this.map.addEventListener('moveend', handleFlyEnd);
     if (collection.bbox) {
       this.map.flyToBounds(boundsFromBbox(collection.bbox), flyOptions);
@@ -222,7 +221,7 @@ class SlideDeck {
       if (slidePos <= currentSlideThreshold) {
         break;
       }
-    }   
+    }
 
     if (i !== this.currentSlideIndex) {
       this.currentSlideIndex = i;

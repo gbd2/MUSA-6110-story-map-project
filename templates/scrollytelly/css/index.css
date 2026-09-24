@@ -416,7 +416,7 @@ h2 {
   cursor: grabbing;
 }
 
-.lightbox-stage img {
+.lightbox-img {
   display: block;
   width: 160vw;
   max-width: none;
