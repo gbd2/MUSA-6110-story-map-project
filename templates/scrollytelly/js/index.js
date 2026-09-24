@@ -127,6 +127,16 @@ const slideOptions = {
       layer.bindTooltip(`${carFree(p.pct_zero_car)}, ${jobs}`);
     },
   },
+  'stranded': {
+    style: (feature) => polyBase(seq(feature.properties.pct_zero_car, 0.35, '#fbe6c2', '#e08a00', 0.7), 0.9),
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      const parts = [carFree(p.pct_zero_car)];
+      if (p.median_hh_income) { parts.push(`$${Math.round(p.median_hh_income).toLocaleString()}`); }
+      parts.push(`${p.stop_mi} mi to nearest stop`);
+      layer.bindTooltip(parts.join(', '));
+    },
+  },
 };
 
 // ## The SlideDeck object
@@ -153,6 +163,7 @@ const legendHTML = {
   'jobs': legendGrad('Jobs reachable in 45 min by transit', '#e6521f', '#0f8f83', 'fewer', 'more')
     + legendRows('', [{ c: NODATA, t: 'No modeled transit' }]),
   'gap': legendRows('Job-access gap', [{ c: '#ffb020', t: 'Highest need, lowest access' }, { c: '#a9b3bc', t: 'Everywhere else' }]),
+  'stranded': legendGrad('Car-free, no stop within 0.5 mi', '#fbe6c2', '#e08a00', '15%', '34%'),
 };
 
 
@@ -174,3 +185,28 @@ document.addEventListener('scroll', () => { deck.calcCurrentSlideIndex(); update
 deck.preloadFeatureCollections();
 deck.syncMapToCurrentSlide();
 updateLegend();
+
+// Fill a slide's scrollable table from the same GeoJSON its map uses.
+const fillTable = async (selector, src, sortFn, rowFn) => {
+  const body = document.querySelector(selector);
+  if (!body) { return; }
+  const fc = await (await fetch(src)).json();
+  const rows = fc.features.map((f) => f.properties).sort(sortFn);
+  body.innerHTML = rows.map(rowFn).join('');
+};
+
+fillTable(
+  '#stranded-rows',
+  'data/stranded.geojson',
+  (a, b) => b.stop_mi - a.stop_mi,
+  (p) => {
+    const inc = p.median_hh_income
+      ? `$${Math.round(p.median_hh_income).toLocaleString()}`
+      : '';
+    const zc = (p.pct_zero_car === null || p.pct_zero_car === undefined)
+      ? 'n/a' : `${Math.round(p.pct_zero_car * 100)}%`;
+    return `<tr><td class="geoid">${p.geoid}</td><td class="numeric">${zc}</td>`
+      + `<td class="numeric">${inc}</td>`
+      + `<td class="numeric">${p.stop_mi.toFixed(1)} mi</td></tr>`;
+  },
+);
