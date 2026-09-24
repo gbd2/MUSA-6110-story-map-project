@@ -42,6 +42,41 @@ const loadDim = async () => {
 };
 loadDim();
 
+const NODATA = '#bcc3ca';
+
+// color helpers from claude
+
+const hexMix = (c0, c1, t) => {
+  const a = [1, 3, 5].map((i) => parseInt(c0.slice(i, i + 2), 16));
+  const b = [1, 3, 5].map((i) => parseInt(c1.slice(i, i + 2), 16));
+  const ch = a.map((v, i) => Math.round(v + (b[i] - v) * t).toString(16).padStart(2, '0'));
+  return `#${ch.join('')}`;
+};
+
+const clamp = (v) => Math.max(0, Math.min(1, v));
+
+const seq = (value, max, c0, c1, ease = 1) => {
+  if (value == null || value === undefined || Number.isNaN(value)) { return NODATA; }
+  return hexMix(c0, c1, clamp(value / max) ** ease);
+};
+
+const polyBase = (fillColor, fillOpacity = 0.82) => ({
+  color: 'rgba(20,28,38,0.22)',
+  weight: 0.4,
+  fillColor,
+  fillOpacity,
+});
+
+const divJobs = (v) => {
+  if (v === null || v === undefined) { return NODATA; }
+  const mid = 204000;
+  if (v <= mid) { return hexMix('#e6521f', '#f2d49a', v / mid); }
+  return hexMix('#f2d49a', '#0f8f83', Math.min(1, (v - mid) / 300000));
+};
+
+const carFree = (v) => ((v === null || v === undefined)
+  ? 'car-free n/a' : `${Math.round(v * 100)}% car-free`);
+
 // ## Interface Elements
 const container = document.querySelector('.slide-section');
 const slides = document.querySelectorAll('.slide');
@@ -60,30 +95,11 @@ const slideOptions = {
       layer.bindTooltip((`${feature.properties.route_short_name || ''} ${feature.properties.route_long_name || ''}`.trim()));
     },
   },
-  'second-slide': {
-    style: (feature) => {
-      return {
-        color: 'red',
-        fillColor: 'green',
-        fillOpacity: 0.5,
-      };
-    },
-    onEachFeature: (feature, layer) => {
-      layer.bindTooltip(feature.properties.label);
-    },
+  'methods': {
+    style: () => ({ color: 'rgb(20 28 38 / 24%)', weight: 0.4, fill: false }),
+    onEachFeature: () => {},
   },
-  'third-slide': {
-    style: (feature) => {
-      return {
-        color: 'blue',
-        fillColor: 'yellow',
-        fillOpacity: 0.5,
-      };
-    },
-    onEachFeature: (feature, layer) => {
-      layer.bindTooltip(feature.properties.label);
-    },
-  },
+  
 };
 
 // ## The SlideDeck object
