@@ -216,6 +216,10 @@ const slideOptions = {
       layer.bindTooltip(`Frequent route: ${p.route_short_name || ''} ${p.route_long_name || ''}`.trim());
     },
   },
+    'citations': {
+    style: () => ({ color: 'rgb(20 28 38 / 30%)', weight: 1, fill: false }),
+    onEachFeature: () => {},
+  },
 };
 
 // ## The SlideDeck object
@@ -253,6 +257,7 @@ const legendHTML = {
 
 
 const legendEl = document.querySelector('#legend');
+const mapContainerEl = document.querySelector('.map-container');
 
 // star + dot at Rice University, the reference point
 const riceIcon = L.divIcon({
@@ -271,7 +276,11 @@ const updateLegend = () => {
   if (id === lastLegendId) { return; }
   lastLegendId = id;
   const html = legendHTML[id];
-  if (html) { legendEl.innerHTML = html; legendEl.hidden = false; } else { legendEl.hidden = true; }
+  if (html) { 
+    legendEl.innerHTML = html; 
+    legendEl.hidden = false; } 
+    else { legendEl.hidden = true; }
+  mapContainerEl.style.visibility = (id === 'citations') ? 'hidden' : '';
   // May need to adjust legend position for certain slides, e.g. if the map is zoomed in and the legend would cover important features
   legendEl.classList.toggle('legend-right', id === 'stranded' || id === 'triple-risk' || id === 'intro');
   if (id === 'redlining') { riceDot.addTo(map); } else if (map.hasLayer(riceDot)) { map.removeLayer(riceDot); }
